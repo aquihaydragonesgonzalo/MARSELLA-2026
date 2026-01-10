@@ -117,7 +117,7 @@
             Circle, MapPin, AlertTriangle, Clock, ExternalLink, AlertCircle,
             Volume2, Languages, PhoneCall, Thermometer, ArrowRight,
             Sun, Cloud, CloudRain, CloudLightning, Calendar, Footprints, Activity as ActivityIcon, Send,
-            Wind, CalendarDays
+            Wind, CalendarDays, Maximize2
         } from 'lucide-react';
         import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -183,7 +183,7 @@
             [43.295464, 5.374481], [43.295461, 5.374443], [43.295817, 5.374371], [43.295813, 5.374328], 
             [43.295808, 5.374282], [43.295801, 5.374214], [43.295796, 5.37416], [43.295814, 5.374156], 
             [43.295922, 5.374082], [43.295986, 5.374004], [43.296079, 5.373687], [43.296101, 5.373601], 
-            [43.2959, 5.373525], [43.295949, 5.37333], [43.296114, 5.372672], [43.295969, 5.371183], 
+            [43.295, 5.373525], [43.295949, 5.37333], [43.296114, 5.372672], [43.295969, 5.371183], 
             [43.295956, 5.371051], [43.295899, 5.37046], [43.295897, 5.370421], [43.295868, 5.370427], 
             [43.295792, 5.369663], [43.295993, 5.36962], [43.295991, 5.3696], [43.295835, 5.368015], 
             [43.295794, 5.367714], [43.295738, 5.367322], [43.295636, 5.366794], [43.295392, 5.365609], 
@@ -208,16 +208,11 @@
             "startTime": "08:00",
             "endTime": "08:00",
             "locationName": "Puerto de Marsella",
-            "endLocationName": "",
             "coords": { "lat": 43.342113, "lng": 5.334879 },
-            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
             "description": "Llegada del barco a puerto.",
-            "keyDetails": "",
             "priceEUR": 0,
             "type": "arrival",
-            "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": ""
+            "completed": false
             },
             {
             "id": "2",
@@ -225,16 +220,12 @@
             "startTime": "10:15",
             "endTime": "10:40",
             "locationName": "Terminal de Cruceros",
-            "endLocationName": "Parada Shuttle MSC",
             "coords": { "lat": 43.342113, "lng": 5.334879 },
-            "endCoords": { "lat": 43.300454, "lng": 5.363335},
             "description": "Utilizaremos el Shuttle de MSC para salir del puerto.",
             "keyDetails": "~17 euros IDA y VUELTA",
             "priceEUR": 17,
             "type": "transport",
-            "completed": false,
-            "googleMapsUrl": "https://maps.app.goo.gl",
-            "contingencyNote": ""
+            "completed": false
             },
             {
             "id": "3",
@@ -242,16 +233,14 @@
             "startTime": "10:50",
             "endTime": "11:35",
             "locationName": "Catedral de la Mayor",
-            "endLocationName": "Catedral de Marsella",
-            "coords": { "lat": 43.300454, "lng": 5.363335}, "endCoords": { "lat": 43.299233, "lng": 5.364688},
+            "coords": { "lat": 43.299233, "lng": 5.364688},
             "description": "Obra maestra del estilo romano-bizantino (1852-1893). Sus dimensiones son colosales: 142m de largo.",
             "keyDetails": "Fíjate en las piedras verdes y blancas y las cúpulas que dominan el puerto.",
             "priceEUR": 0,
             "type": "visit",
             "completed": false,
-            "googleMapsUrl": "https://maps.app.goo.gl/9uQY8nQuSLvf6suc9",
-            "contingencyNote": "",
-            "audioGuideText": "Estás frente a la Catedral de Santa María la Mayor, conocida por los marselleses como 'La Major'. Fue construida en la segunda mitad del siglo XIX, en una época de gran prosperidad económica para la ciudad. Su arquitectura es única en Francia: un estilo romano-bizantino que evoca la posición de Marsella como puerta de Oriente. Observa la alternancia de piedras verdes de Florencia y piedras blancas de Calissane. No es solo una iglesia, es un símbolo de poder. Dentro, la inmensidad de la nave y la altura de la cúpula central de 70 metros te dejarán sin aliento."
+            "audioGuideText": "Estás frente a la Catedral de Santa María la Mayor, conocida por los marselleses como 'La Major'. Fue construida en la segunda mitad del siglo XIX, en una época de gran prosperidad económica para la ciudad. Su arquitectura es única en Francia: un estilo romano-bizantino que evoca la posición de Marsella como puerta de Oriente. Observa la alternancia de piedras verdes de Florencia y piedras blancas de Calissane. No es solo una iglesia, es un símbolo de poder. Dentro, la inmensidad de la nave y la altura de la cúpula central de 70 metros te dejarán sin aliento.",
+            "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSpwSWEqS1n_rDhhbn0MNyaLZ9siZ5wwLFMkgV71TGNe48QvOreIhNu_vBt2fsIbjr6uwe03VfmE1THnsSyEp-ZkkBPvwaxZxWga1O6CXkYgM7GNw9maqnJFI1m_XLjrmm3XQhyDA6B8pNeU83-BHh9ZQ87iZ2FoCBi3tCYZdKQslCqo_FypvCUy-tgaU/s320/catedral-marsella_98.webp"
             },
             {
             "id": "4",
@@ -259,15 +248,14 @@
             "startTime": "11:45",
             "endTime": "12:00",
             "locationName": "Catedral",
-            "endLocationName": "Puerto Viejo (Ferry Boat)", "coords": { "lat": 43.299233, "lng": 5.364688}, "endCoords": { "lat": 43.295831, "lng": 5.370474},
+            "coords": { "lat": 43.299233, "lng": 5.364688},
             "description": "Descenso desde la explanada de la Catedral hacia el corazón histórico.",
             "keyDetails": "Vistas panorámicas del fuerte Saint-Jean a la derecha.",
             "priceEUR": 1,
             "type": "walking",
             "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": "8",
-            "audioGuideText": "Dejamos atrás la majestuosidad de la Catedral para adentrarnos en la vida de la ciudad. A nuestra derecha, imponente, se encuentra el Fuerte Saint-Jean, que ha vigilado la entrada del puerto desde el siglo XII. Caminamos bordeando el barrio de Le Panier, el asentamiento más antiguo de Francia. Siente la brisa marina; nos estamos acercando al 'Vieux Port', el Puerto Viejo, el teatro natural donde se representa la vida diaria de Marsella desde hace 26 siglos."
+            "audioGuideText": "Dejamos atrás la majestuosidad de la Catedral para adentrarnos en la vida de la ciudad. A nuestra derecha, imponente, se encuentra el Fuerte Saint-Jean, que ha vigilado la entrada del puerto desde el siglo XII. Caminamos bordeando el barrio de Le Panier, el asentamiento más antiguo de Francia. Siente la brisa marina; nos estamos acercando al 'Vieux Port', el Puerto Viejo, el teatro natural donde se representa la vida diaria de Marsella desde hace 26 siglos.",
+            "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3o2osUAtxxyOo0GORPQP8tvjUGSFEx-nF0zKdieFzXsVENWqZErJuFPJOxAAy9whdYbvcY53wZPE5QTGH_1jbktt3t7-KJ7kzULnl9ByTkphwvkNEylaMQ4qUAEpMLQFdJOsJ-7bVrw9TF_AtDZ2E0j5SlZCc9VIdWJfmf4odQklQx9_3zmgqhhzKUJo/s320/viejo_puerto_marsella.jpg"
             },
             {
             "id": "5",
@@ -275,15 +263,14 @@
             "startTime": "12:15",
             "endTime": "12:30",
             "locationName": "Muelle Puerto Viejo",
-            "endLocationName": "Muelle opuesto", "coords": { "lat": 43.295831, "lng": 5.370474}, "endCoords": { "lat": 43.293471, "lng": 5.371094},
+            "coords": { "lat": 43.295831, "lng": 5.370474},
             "description": "Travesía icónica en el pequeño barco que une las dos orillas.",
             "keyDetails": "El trayecto más corto y famoso de Marsella.",
             "priceEUR": 0,
             "type": "transport",
             "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": "",
-            "audioGuideText": "Vamos a subir al famoso 'Ferry Boat'. Es una institución local tan querida que el escritor Marcel Pagnol le dedicó escenas enteras en sus películas. Aunque hoy en día hay túneles y autobuses, nada supera este pequeño viaje de escasos minutos. Cruzamos desde el Muelle del Ayuntamiento hasta el Muelle de Rive Neuve. Es la mejor manera de ver el puerto desde el agua sin cansarse, sintiendo el suave balanceo del Mediterráneo en el corazón de la ciudad."
+            "audioGuideText": "Vamos a subir al famoso 'Ferry Boat'. Es una institución local tan querida que el escritor Marcel Pagnol le dedicó escenas enteras en sus películas. Aunque hoy en día hay túneles y autobuses, nada supera este pequeño viaje de escasos minutos. Cruzamos desde el Muelle del Ayuntamiento hasta el Muelle de Rive Neuve. Es la mejor manera de ver el puerto desde el agua sin cansarse, sintiendo el suave balanceo del Mediterráneo en el corazón de la ciudad.",
+            "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjw_wW48vYjFOatftlefXUUdyvGQqqKJTS95043y5DvdkOzCvZEuuxmaUyFpVEi-kNM0EoVt-CW6eYXTqT4WaAU2smJCbMXLeWy_XkiBTPom19o7P_ySgLOXYtXcbGhNzMPjp-eiw6vBgN0gftcKRDMxBnn7aO_CuoEBgRMOF9z-7xB8-2yKk8WAAkPMrk/w320-h206/parada-marsella-antiguo-puerto-8.jpg"
             },
             {
             "id": "6",
@@ -291,14 +278,12 @@
             "startTime": "12:40",
             "endTime": "12:45",
             "locationName": "Puerto Viejo",
-            "endLocationName": "Marquesina Norman Foster", "coords": { "lat": 43.293471, "lng": 5.371094}, "endCoords": { "lat": 43.294701, "lng": 5.374108},
+            "coords": { "lat": 43.293471, "lng": 5.371094},
             "description": "Paseo de 4 minutos de 300 metros.",
             "keyDetails": "L'Ombrière de Norman Foster.",
             "priceEUR": 0,
             "type": "walking",
-            "completed": false,
-            "googleMapsUrl": "https://maps.app.goo.gl/U4fem1z9JuGQW37D9",
-            "contingencyNote": ""
+            "completed": false
             },
             {
             "id": "7",
@@ -306,15 +291,14 @@
             "startTime": "12:45",
             "endTime": "13:00",
             "locationName": "Marquesina (L'Ombrière)",
-            "endLocationName": "", "coords": { "lat": 43.294701, "lng": 5.374108}, "endCoords": { "lat": 43.294701, "lng": 5.374108},
+            "coords": { "lat": 43.294701, "lng": 5.374108},
             "description": "Instalación artística gigante de acero pulido (2013).",
             "keyDetails": "Mire hacia arriba para ver el puerto y a usted mismo invertidos.",
             "priceEUR": 0,
             "type": "visit",
             "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": "",
-            "audioGuideText": "Estamos bajo la gran marquesina de espejo, 'L'Ombrière', obra del arquitecto Norman Foster. Fue inaugurada en 2013 cuando Marsella fue Capital Europea de la Cultura. Es una hoja de acero inoxidable de 46 por 22 metros pulida como un espejo. Su magia reside en que invierte la realidad: mira hacia arriba y verás a la gente caminando por el techo y el mar sobre tu cabeza. Es una metáfora visual de una ciudad que siempre se reinventa."
+            "audioGuideText": "Estamos bajo la gran marquesina de espejo, 'L'Ombrière', obra del arquitecto Norman Foster. Fue inaugurada en 2013 cuando Marsella fue Capital Europea de la Cultura. Es una hoja de acero inoxidable de 46 por 22 metros pulida como un espejo. Su magia reside en que invierte la realidad: mira hacia arriba y verás a la gente caminando por el techo y el mar sobre tu cabeza. Es una metáfora visual de una ciudad que siempre se reinventa.",
+            "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEilzBFkNPQUIAkNEJY7zxkweAKoNSE7s4VDYNaI2S18ayrWa6HyxKDCT8eyq8sQBWVmHtlFDw9U0vDBIxrBjT9roFi5U0ntqM6_aI5HeaAiGB74tBOzmCRotBviEIsftK0Oi89fKnWH5na5hEFkpNrp8STUE4y6LgflcG4Sm7z-g0UzIRKLMSxbRENKszY/w320-h166/marquesina%2002.jpg"
             },
             {
             "id": "8",
@@ -322,15 +306,14 @@
             "startTime": "13:00",
             "endTime": "13:30",
             "locationName": "Zona comercial",
-            "endLocationName": "", "coords": { "lat": 43.295325, "lng": 5.374552}, "endCoords": { "lat": 43.295325, "lng": 5.374552},
+            "coords": { "lat": 43.295325, "lng": 5.374552},
             "description": "Tiempo libre en la zona comercial del puerto.",
             "keyDetails": "Busca el sello '72% d'huile' en los jabones auténticos.",
             "priceEUR": 0,
             "type": "shopping",
             "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": "",
-            "audioGuideText": "Ahora tenemos tiempo para explorar los tesoros locales. Marsella es sinónimo de jabón. El auténtico 'Savon de Marseille' se fabrica aquí desde la Edad Media. Para reconocer el verdadero, busca un cubo (generalmente de 600 gramos), de color verde o beige, que tenga estampado el sello '72% de aceite'. No lleva perfumes ni colorantes. Es un producto puro, hipoalergénico y biodegradable. Además del jabón, busca las 'Navettes', unas galletas duras con forma de barca aromatizadas con flor de azahar."
+            "audioGuideText": "Ahora tenemos tiempo para explorar los tesoros locales. Marsella es sinónimo de jabón. El auténtico 'Savon de Marseille' se fabrica aquí desde la Edad Media. Para reconocer el verdadero, busca un cubo (generalmente de 600 gramos), de color verde o beige, que tenga estampado el sello '72% de aceite'. No lleva perfumes ni colorantes. Es un producto puro, hipoalergénico y biodegradable. Además del jabón, busca las 'Navettes', unas galletas duras con forma de barca aromatizadas con flor de azahar.",
+            "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg1NybbIqwxxt8dW_Rs9CUP_b2OeJTRf6GZDylj53EYLRsrzTGK6W8-6uGq0JXRWyo9UH9DWbDAxMjje4s6ewMqv-omkcuuZVKVZXJRi9uMgDRJ02UmOOqSgDor54bgfP1S9VTntsTcF_MktAQpToyC7NO42bp1xwMR0e5Urdv5VQ4hLoQdqVDrEpZzJw4/w320-h222/tiendas%20marsella.webp"
             },
             {
             "id": "9",
@@ -338,16 +321,12 @@
             "startTime": "13:30",
             "endTime": "13:50",
             "locationName": "Centro",
-            "endLocationName": "Parada Shuttle",
             "coords": { "lat": 43.295325, "lng": 5.374552},
-            "endCoords": { "lat": 43.300454, "lng": 5.363335},
             "description": "Paseo de 22 minutos de 1.6 Km.",
             "keyDetails": "Caminata por el litoral.",
             "priceEUR": 0,
             "type": "walking",
-            "completed": false,
-            "googleMapsUrl": "https://maps.app.goo.gl/ptWCMvLswkivAzF86",
-            "contingencyNote": ""
+            "completed": false
             },
             {
             "id": "10",
@@ -355,16 +334,11 @@
             "startTime": "14:00",
             "endTime": "14:30",
             "locationName": "Parada Shuttle",
-            "endLocationName": "Barco",
             "coords": { "lat": 43.300454, "lng": 5.363335},
-            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
             "description": "Regreso para almorzar en el crucero.",
-            "keyDetails": "",
             "priceEUR": 0,
             "type": "transport",
-            "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": ""
+            "completed": false
             },
             {
             "id": "11",
@@ -372,16 +346,11 @@
             "startTime": "17:30",
             "endTime": "17:30",
             "locationName": "Barco",
-            "endLocationName": "",
-            "coords": null,
-            "endCoords": null,
             "description": "Hora límite para estar dentro del barco.",
             "keyDetails": "MUY IMPORTANTE NO RETRASARSE.",
             "priceEUR": 0,
             "type": "limit",
             "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": "",
             "notes": "CRITICAL"
             },
             {
@@ -390,16 +359,11 @@
             "startTime": "18:00",
             "endTime": "18:00",
             "locationName": "Puerto de Marsella",
-            "endLocationName": "",
             "coords": { "lat": 43.342113, "lng": 5.334879 },
-            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
             "description": "Salida del barco hacia el próximo destino.",
-            "keyDetails": "",
             "priceEUR": 0,
             "type": "departure",
-            "completed": false,
-            "googleMapsUrl": "",
-            "contingencyNote": ""
+            "completed": false
             }
         ];
 
@@ -413,6 +377,7 @@
 
         // --- UTILIDADES ---
         const calculateDuration = (startStr, endStr) => {
+          if(!startStr || !endStr) return "";
           const [startH, startM] = startStr.split(':').map(Number);
           const [endH, endM] = endStr.split(':').map(Number);
           let diffMins = (endH * 60 + endM) - (startH * 60 + startM);
@@ -433,6 +398,7 @@
         };
 
         const calculateGap = (endStrPrev, startStrNext) => {
+          if(!endStrPrev || !startStrNext) return 0;
           const [endH, endM] = endStrPrev.split(':').map(Number);
           const [startH, startM] = startStrNext.split(':').map(Number);
           let diffMins = (startH * 60 + startM) - (endH * 60 + endM);
@@ -457,8 +423,30 @@
         // --- COMPONENTES ---
 
         const Timeline = ({ itinerary, onToggleComplete, onLocate, onOpenAudioGuide }) => {
+          const [zoomedImage, setZoomedImage] = useState(null);
+
           return (
             <div className="pb-24 px-4 pt-4 max-w-lg mx-auto">
+              {/* Modal de Zoom */}
+              {zoomedImage && (
+                <div 
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-300"
+                    onClick={() => setZoomedImage(null)}
+                >
+                    <button 
+                        className="absolute top-6 right-6 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                        onClick={(e) => { e.stopPropagation(); setZoomImage(null); }}
+                    >
+                        <X size={32} />
+                    </button>
+                    <img 
+                        src={zoomedImage} 
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300" 
+                        alt="Zoom" 
+                    />
+                </div>
+              )}
+
               <div className="flex justify-between items-end mb-6">
                 <h2 className="text-2xl font-bold text-blue-900 uppercase tracking-tight">Ruta Marsella</h2>
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md border border-blue-100">En Vivo</span>
@@ -481,14 +469,14 @@
                       )}
                       
                       <div className="mb-8 ml-6 relative">
-                        <div onClick={() => onToggleComplete(act.id)} className={`absolute -left-[31px] top-0 rounded-full bg-white border-2 cursor-pointer z-10 ${act.completed ? 'border-emerald-500 text-emerald-500 shadow-sm' : 'border-blue-700 text-blue-700 shadow-sm'}`}>
+                        <div onClick={() => onToggleComplete(act.id)} className={`absolute -left-[31px] top-0 rounded-full bg-white border-2 cursor-pointer z-10 transition-colors ${act.completed ? 'border-emerald-500 text-emerald-500 shadow-sm' : 'border-blue-700 text-blue-700 shadow-sm'}`}>
                             {act.completed ? <CheckCircle2 size={24} /> : <Circle size={24} />}
                         </div>
                         <div className={`rounded-2xl border shadow-sm transition-all overflow-hidden bg-white ${act.notes === 'CRITICAL' ? 'border-rose-500 bg-rose-50' : act.completed ? 'opacity-70 border-emerald-500' : 'border-blue-50'}`}>
                             <div className="w-full h-1.5 bg-blue-50 overflow-hidden"><div className={`h-full ${calculateTimeProgress(act.startTime, act.endTime) === 100 ? 'bg-slate-300' : 'bg-blue-800'}`} style={{ width: `${calculateTimeProgress(act.startTime, act.endTime)}%` }}></div></div>
                             <div className="p-5">
                                 <div className="flex justify-between items-start mb-2">
-                                    <div>
+                                    <div className="flex-1">
                                         <div className="flex items-center space-x-2 mb-2">
                                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-tighter">{act.startTime} - {act.endTime}</span>
                                             <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">{calculateDuration(act.startTime, act.endTime)}</span>
@@ -498,6 +486,25 @@
                                     {isCritical && <AlertTriangle className="text-rose-600 animate-pulse" size={20} />}
                                 </div>
                                 <div className="mb-3 text-sm text-slate-600 flex items-center flex-wrap gap-1"><MapPin size={14} className="mr-0.5 text-blue-700"/> {act.locationName}</div>
+                                
+                                {act.image && (
+                                    <div 
+                                        className="relative mb-4 rounded-xl overflow-hidden border border-slate-100 group cursor-pointer aspect-video bg-slate-100"
+                                        onClick={() => setZoomedImage(act.image)}
+                                    >
+                                        <img 
+                                            src={act.image} 
+                                            alt={act.title} 
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                            <div className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+                                                <Maximize2 size={20} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <p className="text-sm text-slate-600 mb-4 whitespace-pre-line leading-relaxed">{act.description}</p>
                                 {act.keyDetails && <div className="bg-blue-50/50 p-3 rounded-xl text-sm italic border-l-4 border-amber-600 mb-4 text-blue-900 font-medium">"{act.keyDetails}"</div>}
                                 <div className="flex flex-wrap items-center gap-2 mt-3 pt-4 border-t border-slate-50">
