@@ -1,0 +1,945 @@
+
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Marsella 2026 | Guía PWA</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Marsella 2026">
+    <meta name="description" content="Guía personalizada para la escala en Marsella 2026">
+    
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvVYlm-4zLxbxXytfjaMND4HGRSzqyWMEewJl-tKAd8Qs28rFd411YMWOfAV2YJu-IqqOB3KaBEw_0rFxpoFHCLiAHn7ZtqoxNYG1bZVZ4U7Q4cuIV9V-XU8JiyyT6aigIB0UJLpeWu4fXhfcQ_6nbrXd84YPRd7dZ8q1STw-rLcfTdkCTa5oAoPuTPZ8/s320/Gemini_Generated_Image_l4457il4457il445.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        marsella: { 
+                          50: '#eff6ff', 
+                          100: '#dbeafe', 
+                          200: '#bfdbfe', 
+                          300: '#93c5fd', 
+                          400: '#60a5fa', 
+                          500: '#3b82f6', 
+                          600: '#2563eb', 
+                          700: '#1d4ed8', 
+                          800: '#1e40af', 
+                          900: '#1e3a8a' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overscroll-behavior-y: none; background-color: #f8fafc; }
+        body { font-family: 'Roboto Condensed', sans-serif; -webkit-tap-highlight-color: transparent; }
+        #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-h-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-h-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-h-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .leaflet-bottom { bottom: 85px !important; }
+        
+        #initial-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1e3a8a; display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.4s ease-out;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .user-marker { position: relative; }
+        .user-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 40px; height: 40px;
+            transform: translate(-50%, -50%);
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+        }
+    </style>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react",
+    "recharts": "https://esm.sh/recharts@2.13.0?external=react",
+    "leaflet": "https://esm.sh/leaflet@1.9.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="initial-loader">
+        <div style="text-align: center; color: white;">
+            <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;"></div>
+            <p style="font-weight: bold; letter-spacing: 1.5px; font-size: 11px; text-transform: uppercase; opacity: 0.8;">Iniciando Guía Marsella</p>
+        </div>
+    </div>
+
+    <div id="root"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useMemo, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            CalendarClock, Map as MapIcon, Wallet, BookOpen, Anchor, 
+            Headphones, X, Play, Square, Navigation, CheckCircle2, 
+            Circle, MapPin, AlertTriangle, Clock, ExternalLink, AlertCircle,
+            Volume2, Languages, PhoneCall, Thermometer, ArrowRight,
+            Sun, Cloud, CloudRain, CloudLightning, Calendar, Footprints, Activity as ActivityIcon, Send,
+            Wind, CalendarDays
+        } from 'lucide-react';
+        import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+
+        // --- CONSTANTES MARSELLA ---
+        const SHIP_DEPARTURE_TIME = "18:00";
+        const SHIP_ONBOARD_TIME = "17:30";
+        const DATE_OF_VISIT = "2026-04-13";
+
+        const GPX_WAYPOINTS = [
+            { name: "SHUTTLE MSC", lat: 43.300454, lng: 5.363335 },
+            { name: "TERMINAL DE CRUCEROS", lat: 43.342113, lng: 5.334879 },
+            { name: "SHUTTLE GRATUITO (Muelle)", lat: 43.340199, lng: 5.340408 },
+            { name: "CATEDRAL DE MARSELLA", lat: 43.299233, lng: 5.364688 },
+            { name: "CALLE DE TIENDAS", lat: 43.295325, lng: 5.374552 },
+            { name: "Marquesina Norman Foster", lat: 43.294701, lng: 5.374108 },
+            { name: "NOTRE DAME DE LA GARDE", lat: 43.284108, lng: 5.370917 },
+            { name: "PUERTO VIEJO DE MARSELLA", lat: 43.296015, lng: 5.37043 },
+            { name: "Ferry hacia el otro lado", lat: 43.295831, lng: 5.370474 },
+            { name: "FERRY (Llegada)", lat: 43.293471, lng: 5.371094 },
+            { name: "SHUTTLE GRATUITO (Centro)", lat: 43.304214, lng: 5.364698 },
+            { name: "PARADA DE TAXI (Ayuntamiento)", lat: 43.297007, lng: 5.376743 },
+            { name: "PARADA DE TAXI (Puerto Viejo)", lat: 43.294871, lng: 5.3746 }
+        ];
+
+        // Track detallado extraído del GPX
+        const MARSEILLE_TRACK = [
+            [43.300417, 5.363492], [43.300387, 5.363435], [43.300194, 5.363387], [43.300129, 5.363441], 
+            [43.300066, 5.363492], [43.30003, 5.363522], [43.299962, 5.363612], [43.300058, 5.363645], 
+            [43.30005, 5.363696], [43.300042, 5.363743], [43.30002, 5.363872], [43.300011, 5.363929], 
+            [43.299992, 5.364037], [43.29998, 5.364115], [43.299942, 5.364104], [43.299776, 5.364054], 
+            [43.299766, 5.364109], [43.299932, 5.364161], [43.299972, 5.364173], [43.299956, 5.364276], 
+            [43.299689, 5.364201], [43.29908, 5.364009], [43.299048, 5.364221], [43.298983, 5.364619], 
+            [43.299103, 5.364656], [43.299103, 5.364656], [43.298983, 5.364619], [43.298833, 5.364571], 
+            [43.298693, 5.364518], [43.298591, 5.36448], [43.298565, 5.364445], [43.298465, 5.364342], 
+            [43.298233, 5.364201], [43.298089, 5.364075], [43.297403, 5.363408], [43.297231, 5.363263], 
+            [43.297101, 5.363144], [43.296988, 5.362969], [43.296996, 5.362913], [43.297001, 5.362875], 
+            [43.297022, 5.362734], [43.29703, 5.362667], [43.296731, 5.362588], [43.296635, 5.362562], 
+            [43.296613, 5.362556], [43.296609, 5.362583], [43.296493, 5.362553], [43.29627, 5.362511], 
+            [43.296189, 5.362511], [43.296006, 5.362511], [43.295861, 5.362533], [43.295706, 5.362567], 
+            [43.295528, 5.362653], [43.295422, 5.362727], [43.295314, 5.36283], [43.29522, 5.362952], 
+            [43.295154, 5.363095], [43.295107, 5.36324], [43.295104, 5.3633], [43.295076, 5.363309], 
+            [43.295068, 5.363568], [43.295049, 5.363569], [43.295052, 5.363647], [43.295071, 5.363784], 
+            [43.295133, 5.364165], [43.295245, 5.364766], [43.295232, 5.364771], [43.295338, 5.365309], 
+            [43.295343, 5.365333], [43.295392, 5.365609], [43.295636, 5.366794], [43.295738, 5.367322], 
+            [43.295794, 5.367714], [43.295835, 5.368015], [43.295991, 5.3696], [43.295993, 5.36962], 
+            [43.295792, 5.369663], [43.295858, 5.370332], [43.295422, 5.370484], [43.294986, 5.370636], 
+            [43.294551, 5.370788], [43.294115, 5.370941], [43.293679, 5.371093], [43.293454, 5.371171], 
+            [43.293468, 5.371163], [43.293569, 5.37158], [43.293582, 5.371582], [43.293594, 5.371603], 
+            [43.294133, 5.373718], [43.294283, 5.373903], [43.294303, 5.373929], [43.294359, 5.373998], 
+            [43.294326, 5.374081], [43.294262, 5.37425], [43.294283, 5.374294], [43.294329, 5.37436], 
+            [43.294364, 5.374396], [43.294404, 5.374417], [43.294446, 5.374429], [43.294489, 5.374428], 
+            [43.294589, 5.374408], [43.294638, 5.374398], [43.294776, 5.374372], [43.294777, 5.374336], 
+            [43.29504, 5.374283], [43.295043, 5.374316], [43.295155, 5.374292], [43.295266, 5.374271], 
+            [43.295431, 5.374242], [43.295431, 5.374246], [43.295435, 5.374288], [43.29544, 5.374331], 
+            [43.295442, 5.374353], [43.295443, 5.374362], [43.295447, 5.374407], [43.295451, 5.374441], 
+            [43.295451, 5.374444], [43.295461, 5.374443], [43.295464, 5.374481], [43.295466, 5.374512], 
+            [43.295473, 5.374561], [43.295587, 5.3749], [43.295681, 5.375176], [43.295717, 5.375286], 
+            [43.29571, 5.375312], [43.295812, 5.375611], [43.295915, 5.375912], [43.295934, 5.375919], 
+            [43.29595, 5.375975], [43.295957, 5.375998], [43.295873, 5.376051], [43.296042, 5.37654], 
+            [43.295873, 5.376051], [43.295957, 5.375998], [43.29595, 5.375975], [43.295934, 5.375919], 
+            [43.295915, 5.375912], [43.295812, 5.375611], [43.29571, 5.375312], [43.295717, 5.375286], 
+            [43.295681, 5.375176], [43.295587, 5.3749], [43.295473, 5.374561], [43.295466, 5.374512], 
+            [43.295464, 5.374481], [43.295461, 5.374443], [43.295817, 5.374371], [43.295813, 5.374328], 
+            [43.295808, 5.374282], [43.295801, 5.374214], [43.295796, 5.37416], [43.295814, 5.374156], 
+            [43.295922, 5.374082], [43.295986, 5.374004], [43.296079, 5.373687], [43.296101, 5.373601], 
+            [43.2959, 5.373525], [43.295949, 5.37333], [43.296114, 5.372672], [43.295969, 5.371183], 
+            [43.295956, 5.371051], [43.295899, 5.37046], [43.295897, 5.370421], [43.295868, 5.370427], 
+            [43.295792, 5.369663], [43.295993, 5.36962], [43.295991, 5.3696], [43.295835, 5.368015], 
+            [43.295794, 5.367714], [43.295738, 5.367322], [43.295636, 5.366794], [43.295392, 5.365609], 
+            [43.295343, 5.365333], [43.295338, 5.365309], [43.295232, 5.364771], [43.295245, 5.364766], 
+            [43.295133, 5.364165], [43.295071, 5.363784], [43.295052, 5.363647], [43.295049, 5.363569], 
+            [43.295068, 5.363568], [43.295076, 5.363309], [43.295104, 5.3633], [43.295107, 5.36324], 
+            [43.295154, 5.363095], [43.29522, 5.362952], [43.295314, 5.36283], [43.295422, 5.362727], 
+            [43.295528, 5.362653], [43.295706, 5.362567], [43.295861, 5.362533], [43.296006, 5.362511], 
+            [43.29627, 5.362511], [43.296493, 5.362553], [43.296609, 5.362583], [43.296613, 5.362556], 
+            [43.296635, 5.362562], [43.296731, 5.362588], [43.29703, 5.362667], [43.29732, 5.362752], 
+            [43.297355, 5.362748], [43.297911, 5.362921], [43.297914, 5.362975], [43.298065, 5.362853], 
+            [43.298148, 5.363038], [43.298178, 5.363047], [43.298337, 5.363094], [43.298439, 5.363125], 
+            [43.298449, 5.363121], [43.298459, 5.363103], [43.298508, 5.363116], [43.298562, 5.363131], 
+            [43.298695, 5.363167], [43.298772, 5.36319], [43.298831, 5.363208], [43.299962, 5.363612], 
+            [43.30003, 5.363522], [43.300066, 5.363492], [43.300427, 5.36359]
+        ];
+
+        const INITIAL_ITINERARY = [
+            {
+            "id": "1",
+            "title": "Llegada al Puerto de Marsella",
+            "startTime": "08:00",
+            "endTime": "08:00",
+            "locationName": "Puerto de Marsella",
+            "endLocationName": "",
+            "coords": { "lat": 43.342113, "lng": 5.334879 },
+            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
+            "description": "Llegada del barco a puerto.",
+            "keyDetails": "",
+            "priceEUR": 0,
+            "type": "arrival",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            },
+            {
+            "id": "2",
+            "title": "Desembarco y Shuttle de MSC",
+            "startTime": "10:15",
+            "endTime": "10:40",
+            "locationName": "Terminal de Cruceros",
+            "endLocationName": "Parada Shuttle MSC",
+            "coords": { "lat": 43.342113, "lng": 5.334879 },
+            "endCoords": { "lat": 43.300454, "lng": 5.363335},
+            "description": "Utilizaremos el Shuttle de MSC para salir del puerto.",
+            "keyDetails": "~17 euros IDA y VUELTA",
+            "priceEUR": 17,
+            "type": "transport",
+            "completed": false,
+            "googleMapsUrl": "https://maps.app.goo.gl",
+            "contingencyNote": ""
+            },
+            {
+            "id": "3",
+            "title": "Paseo y visita a la Catedral",
+            "startTime": "10:50",
+            "endTime": "11:35",
+            "locationName": "Parada Shuttle",
+            "endLocationName": "Catedral de Marsella",
+            "coords": { "lat": 43.300454, "lng": 5.363335}, "endCoords": { "lat": 43.299233, "lng": 5.364688},
+            "description": "Paseo de 7 minutos de 400 metros.",
+            "keyDetails": "Visita a la Catedral de la Mayor.",
+            "priceEUR": 0,
+            "type": "visit",
+            "completed": false,
+            "googleMapsUrl": "https://maps.app.goo.gl/9uQY8nQuSLvf6suc9",
+            "contingencyNote": ""
+            },
+            {
+            "id": "4",
+            "title": "Paseo al Ferry del Puerto viejo",
+            "startTime": "11:45",
+            "endTime": "12:00",
+            "locationName": "Catedral",
+            "endLocationName": "Puerto Viejo (Ferry Boat)", "coords": { "lat": 43.299233, "lng": 5.364688}, "endCoords": { "lat": 43.295831, "lng": 5.370474},
+            "description": "Paseo de 15 minutos de 1,1 Km.",
+            "keyDetails": "",
+            "priceEUR": 1,
+            "type": "walking",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": "8"
+            },
+            {
+            "id": "5",
+            "title": "Cruzamos el puerto en Ferry",
+            "startTime": "12:15",
+            "endTime": "12:30",
+            "locationName": "Muelle Puerto Viejo",
+            "endLocationName": "Muelle opuesto", "coords": { "lat": 43.295831, "lng": 5.370474}, "endCoords": { "lat": 43.293471, "lng": 5.371094},
+            "description": "El recorrido en Ferry más corto del mundo. CRUZA EL MUELLE DEL PUERTO VIEJO DE MARSELLA.",
+            "keyDetails": "Ferry Boat histórico.",
+            "priceEUR": 0,
+            "type": "transport",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            },
+            {
+            "id": "6",
+            "title": "Paseo del Ferry al Marquesina Reflectante de Norman Foster",
+            "startTime": "12:40",
+            "endTime": "12:45",
+            "locationName": "Puerto Viejo",
+            "endLocationName": "Marquesina Norman Foster", "coords": { "lat": 43.293471, "lng": 5.371094}, "endCoords": { "lat": 43.294701, "lng": 5.374108},
+            "description": "Paseo de 4 minutos de 300 metros.",
+            "keyDetails": "L'Ombrière de Norman Foster.",
+            "priceEUR": 0,
+            "type": "walking",
+            "completed": false,
+            "googleMapsUrl": "https://maps.app.goo.gl/U4fem1z9JuGQW37D9",
+            "contingencyNote": ""
+            },
+            {
+            "id": "7",
+            "title": "Reflectante de Norman Foster",
+            "startTime": "12:45",
+            "endTime": "13:00",
+            "locationName": "Marquesina",
+            "endLocationName": "", "coords": { "lat": 43.294701, "lng": 5.374108}, "endCoords": { "lat": 43.294701, "lng": 5.374108},
+            "description": "Punto de interés arquitectónico.",
+            "keyDetails": "Mirar hacia arriba para ver el reflejo.",
+            "priceEUR": 0,
+            "type": "visit",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            },
+            {
+            "id": "8",
+            "title": "Calle de Tiendas SOUVENIR",
+            "startTime": "13:00",
+            "endTime": "13:30",
+            "locationName": "Zona comercial",
+            "endLocationName": "", "coords": { "lat": 43.295325, "lng": 5.374552}, "endCoords": { "lat": 43.295325, "lng": 5.374552},
+            "description": "Tiempo libre para compras.",
+            "keyDetails": "Jabones de Marsella y artesanía.",
+            "priceEUR": 0,
+            "type": "shopping",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            },
+            {
+            "id": "9",
+            "title": "Regreso al Shuttle de MSC por el Paseo Marítimo",
+            "startTime": "13:30",
+            "endTime": "13:50",
+            "locationName": "Centro",
+            "endLocationName": "Parada Shuttle",
+            "coords": { "lat": 43.295325, "lng": 5.374552},
+            "endCoords": { "lat": 43.300454, "lng": 5.363335},
+            "description": "Paseo de 22 minutos de 1.6 Km.",
+            "keyDetails": "Caminata por el litoral.",
+            "priceEUR": 0,
+            "type": "walking",
+            "completed": false,
+            "googleMapsUrl": "https://maps.app.goo.gl/ptWCMvLswkivAzF86",
+            "contingencyNote": ""
+            },
+            {
+            "id": "10",
+            "title": "Shuttle de MSC al Barco - COMEMOS A ABORDO",
+            "startTime": "14:00",
+            "endTime": "14:30",
+            "locationName": "Parada Shuttle",
+            "endLocationName": "Barco",
+            "coords": { "lat": 43.300454, "lng": 5.363335},
+            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
+            "description": "Regreso para almorzar en el crucero.",
+            "keyDetails": "",
+            "priceEUR": 0,
+            "type": "transport",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            },
+            {
+            "id": "11",
+            "title": "TODOS A BORDO HORA LÍMITE",
+            "startTime": "17:30",
+            "endTime": "17:30",
+            "locationName": "Barco",
+            "endLocationName": "",
+            "coords": null,
+            "endCoords": null,
+            "description": "Hora límite para estar dentro del barco.",
+            "keyDetails": "MUY IMPORTANTE NO RETRASARSE.",
+            "priceEUR": 0,
+            "type": "limit",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": "",
+            "notes": "CRITICAL"
+            },
+            {
+            "id": "12",
+            "title": "Zarpamos de Marsella",
+            "startTime": "18:00",
+            "endTime": "18:00",
+            "locationName": "Puerto de Marsella",
+            "endLocationName": "",
+            "coords": { "lat": 43.342113, "lng": 5.334879 },
+            "endCoords": { "lat": 43.342113, "lng": 5.334879 },
+            "description": "Salida del barco hacia el próximo destino.",
+            "keyDetails": "",
+            "priceEUR": 0,
+            "type": "departure",
+            "completed": false,
+            "googleMapsUrl": "",
+            "contingencyNote": ""
+            }
+        ];
+
+        const PRONUNCIATIONS = [
+            { word: 'Bonjour', phonetic: "Bon-yur", simplified: 'Bon-yur', meaning: 'Buenos días' },
+            { word: 'Merci', phonetic: "Mer-si", simplified: 'Mer-si', meaning: 'Gracias' },
+            { word: 'S\'il vous plaît', phonetic: "Sil-vu-ple", simplified: 'Sil-vu-ple', meaning: 'Por favor' },
+            { word: 'L\'addition', phonetic: "La-di-sion", simplified: 'La-di-sion', meaning: 'La cuenta' },
+            { word: 'Toilettes', phonetic: "Tua-let", simplified: 'Tua-let', meaning: 'Baños' }
+        ];
+
+        // --- UTILIDADES ---
+        const calculateDuration = (startStr, endStr) => {
+          const [startH, startM] = startStr.split(':').map(Number);
+          const [endH, endM] = endStr.split(':').map(Number);
+          let diffMins = (endH * 60 + endM) - (startH * 60 + startM);
+          if (diffMins < 0) diffMins += 24 * 60; 
+          const hours = Math.floor(diffMins / 60);
+          const minutes = diffMins % 60;
+          if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
+          if (hours > 0) return `${hours}h`;
+          return `${minutes} min`;
+        };
+
+        const formatGap = (mins) => {
+          const h = Math.floor(mins / 60);
+          const m = mins % 60;
+          if (h > 0 && m > 0) return `${h}h ${m}min`;
+          if (h > 0) return `${h}h`;
+          return `${m}min`;
+        };
+
+        const calculateGap = (endStrPrev, startStrNext) => {
+          const [endH, endM] = endStrPrev.split(':').map(Number);
+          const [startH, startM] = startStrNext.split(':').map(Number);
+          let diffMins = (startH * 60 + startM) - (endH * 60 + endM);
+          if (diffMins < 0) diffMins += 24 * 60; 
+          return diffMins;
+        };
+
+        const calculateTimeProgress = (startTime, endTime) => {
+          const now = new Date();
+          const currentMinutes = now.getHours() * 60 + now.getMinutes();
+          const [startH, startM] = startTime.split(':').map(Number);
+          const startMinutes = startH * 60 + startM;
+          const [endH, endM] = endTime.split(':').map(Number);
+          const endMinutes = endH * 60 + endM;
+          if (currentMinutes < startMinutes) return 0;
+          if (currentMinutes >= endMinutes) return 100;
+          const totalRange = endMinutes - startMinutes;
+          const elapsed = currentMinutes - startMinutes;
+          return Math.min(100, Math.max(0, (elapsed / totalRange) * 100));
+        };
+
+        // --- COMPONENTES ---
+
+        const Timeline = ({ itinerary, onToggleComplete, onLocate, onOpenAudioGuide }) => {
+          return (
+            <div className="pb-24 px-4 pt-4 max-w-lg mx-auto">
+              <div className="flex justify-between items-end mb-6">
+                <h2 className="text-2xl font-bold text-blue-900 uppercase tracking-tight">Ruta Marsella</h2>
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md border border-blue-100">En Vivo</span>
+              </div>
+              <div className="relative border-l-2 border-blue-100 ml-3 space-y-8">
+                {itinerary.map((act, idx) => {
+                  const prevAct = idx > 0 ? itinerary[idx - 1] : null;
+                  const gap = prevAct ? calculateGap(prevAct.endTime, act.startTime) : 0;
+                  const isCritical = act.notes === 'CRITICAL';
+                  
+                  return (
+                    <React.Fragment key={act.id}>
+                      {gap > 0 && (
+                        <div className="mb-4 ml-6 flex items-center">
+                          <div className="bg-blue-50/80 px-2.5 py-1 rounded-full border border-blue-100 flex items-center gap-2 shadow-sm">
+                            <Clock size={10} className="text-blue-400" />
+                            <span className="text-[9px] font-black text-blue-500 uppercase tracking-tighter">{formatGap(gap)} traslado / espera</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="mb-8 ml-6 relative">
+                        <div onClick={() => onToggleComplete(act.id)} className={`absolute -left-[31px] top-0 rounded-full bg-white border-2 cursor-pointer z-10 ${act.completed ? 'border-emerald-500 text-emerald-500 shadow-sm' : 'border-blue-700 text-blue-700 shadow-sm'}`}>
+                            {act.completed ? <CheckCircle2 size={24} /> : <Circle size={24} />}
+                        </div>
+                        <div className={`rounded-2xl border shadow-sm transition-all overflow-hidden bg-white ${act.notes === 'CRITICAL' ? 'border-rose-500 bg-rose-50' : act.completed ? 'opacity-70 border-emerald-500' : 'border-blue-50'}`}>
+                            <div className="w-full h-1.5 bg-blue-50 overflow-hidden"><div className={`h-full ${calculateTimeProgress(act.startTime, act.endTime) === 100 ? 'bg-slate-300' : 'bg-blue-800'}`} style={{ width: `${calculateTimeProgress(act.startTime, act.endTime)}%` }}></div></div>
+                            <div className="p-5">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div className="flex items-center space-x-2 mb-2">
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-tighter">{act.startTime} - {act.endTime}</span>
+                                            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">{calculateDuration(act.startTime, act.endTime)}</span>
+                                        </div>
+                                        <h3 className="font-bold text-lg text-slate-800 leading-tight">{act.title}</h3>
+                                    </div>
+                                    {isCritical && <AlertTriangle className="text-rose-600 animate-pulse" size={20} />}
+                                </div>
+                                <div className="mb-3 text-sm text-slate-600 flex items-center flex-wrap gap-1"><MapPin size={14} className="mr-0.5 text-blue-700"/> {act.locationName}</div>
+                                <p className="text-sm text-slate-600 mb-4 whitespace-pre-line leading-relaxed">{act.description}</p>
+                                {act.keyDetails && <div className="bg-blue-50/50 p-3 rounded-xl text-sm italic border-l-4 border-amber-600 mb-4 text-blue-900 font-medium">"{act.keyDetails}"</div>}
+                                <div className="flex flex-wrap items-center gap-2 mt-3 pt-4 border-t border-slate-50">
+                                    {act.coords && <button onClick={() => onLocate(act.coords)} className="flex items-center text-[10px] font-bold text-blue-900 bg-blue-50 px-3 py-2 rounded-xl border border-blue-100 shadow-sm active:bg-blue-100"><Navigation size={12} className="mr-1.5" /> UBICACIÓN</button>}
+                                    {act.audioGuideText && (
+                                      <button onClick={() => onOpenAudioGuide(act)} className="flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-100 shadow-sm active:bg-amber-100"><Headphones size={12} className="mr-1.5" /> AUDIOGUÍA</button>
+                                    )}
+                                    <button onClick={() => onToggleComplete(act.id)} className={`ml-auto px-3 py-2 rounded-xl text-[10px] font-bold uppercase transition-all ${act.completed ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-900 text-white'}`}>{act.completed ? 'Hecho' : 'Completar'}</button>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        };
+
+        const MapComponent = ({ activities, userLocation, focusedLocation }) => {
+            const mapContainerRef = useRef(null);
+            const mapInstanceRef = useRef(null);
+            const layersRef = useRef([]);
+
+            useEffect(() => {
+                if (!mapContainerRef.current || mapInstanceRef.current) return;
+                const map = L.map(mapContainerRef.current, { zoomControl: false }).setView([43.2965, 5.3698], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+                mapInstanceRef.current = map;
+                return () => { map.remove(); mapInstanceRef.current = null; };
+            }, []);
+
+            useEffect(() => {
+                const map = mapInstanceRef.current;
+                if (!map) return;
+                layersRef.current.forEach(layer => layer.remove());
+                layersRef.current = [];
+
+                activities.forEach(act => {
+                    if(act.coords && act.coords.lat) {
+                        const marker = L.marker([act.coords.lat, act.coords.lng]).addTo(map);
+                        marker.bindPopup(`
+                            <div style="padding: 10px; font-family: 'Roboto Condensed', sans-serif; max-width: 200px;">
+                                <h3 style="margin: 0 0 4px 0; font-weight: bold; color: #1e3a8a; font-size: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">${act.title}</h3>
+                                <p style="margin: 6px 0; font-size: 11px; color: #1e3a8a; font-weight: bold;">${act.locationName}</p>
+                                <a href="https://www.google.com/maps/dir/?api=1&destination=${act.coords.lat},${act.coords.lng}" 
+                                   target="_blank" style="display: block; background: #1e3a8a; color: white; text-align: center; padding: 8px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 10px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                   INDICACIONES (Google Maps)
+                                </a>
+                            </div>
+                        `);
+                        layersRef.current.push(marker);
+                    }
+                });
+
+                GPX_WAYPOINTS.forEach(wpt => {
+                    const circleMarker = L.circleMarker([wpt.lat, wpt.lng], {
+                        radius: 6, fillColor: "#BE123C", color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.8
+                    }).addTo(map);
+                    circleMarker.bindPopup(`<div style="font-family: 'Roboto Condensed', sans-serif; font-size: 12px; font-weight: bold; color: #BE123C;">${wpt.name}</div>`);
+                    layersRef.current.push(circleMarker);
+                });
+
+                L.polyline(MARSEILLE_TRACK, { color: '#1e3a8a', weight: 4, opacity: 0.7, dashArray: '8, 12' }).addTo(map);
+                
+                if (userLocation) {
+                    const uMarker = L.circleMarker([userLocation.lat, userLocation.lng], { radius: 8, color: 'white', weight: 3, fillColor: '#3b82f6', fillOpacity: 1 }).addTo(map);
+                    layersRef.current.push(uMarker);
+                }
+            }, [activities, userLocation]);
+
+            useEffect(() => {
+                if (mapInstanceRef.current && focusedLocation) mapInstanceRef.current.flyTo([focusedLocation.lat, focusedLocation.lng], 16);
+            }, [focusedLocation]);
+
+            return <div ref={mapContainerRef} className="w-full h-full z-0" />;
+        };
+
+        const Guide = ({ userLocation }) => {
+            const [playing, setPlaying] = useState(null);
+            const [weather, setWeather] = useState(null);
+            const [loadingWeather, setLoadingWeather] = useState(true);
+
+            useEffect(() => {
+                const fetchWeather = async () => {
+                    try {
+                        // Coordenadas de Marsella
+                        const response = await fetch(
+                        'https://api.open-meteo.com/v1/forecast?latitude=43.2965&longitude=5.3698&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Europe%2FParis'
+                        );
+                        const data = await response.json();
+                        setWeather({
+                            hourly: {
+                                time: data.hourly.time,
+                                temperature: data.hourly.temperature_2m,
+                                code: data.hourly.weathercode
+                            },
+                            daily: {
+                                time: data.daily.time,
+                                weathercode: data.daily.weathercode,
+                                temperature_2m_max: data.daily.temperature_2m_max,
+                                temperature_2m_min: data.daily.temperature_2m_min
+                            }
+                        });
+                    } catch (error) {
+                        console.error("Clima error:", error);
+                    } finally {
+                        setLoadingWeather(false);
+                    }
+                };
+                fetchWeather();
+            }, []);
+
+            const getWeatherIcon = (code, size = 20) => {
+                if (code <= 1) return <Sun size={size} className="text-amber-500" />;
+                if (code <= 3) return <Cloud size={size} className="text-slate-400" />;
+                if (code <= 67) return <CloudRain size={size} className="text-blue-500" />;
+                if (code <= 99) return <CloudLightning size={size} className="text-purple-500" />;
+                return <Wind size={size} className="text-slate-400" />;
+            };
+
+            const play = (word) => {
+                const ut = new SpeechSynthesisUtterance(word);
+                ut.lang = 'fr-FR'; // Francés
+                ut.onend = () => setPlaying(null);
+                setPlaying(word);
+                window.speechSynthesis.speak(ut);
+            };
+
+            const handleSOS = () => {
+                const msg = `¡SOS! Necesito ayuda en Marsella. Ubicación: ${userLocation ? `https://maps.google.com/?q=${userLocation.lat},${userLocation.lng}` : 'GPS no disponible'}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            };
+
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric' }).format(date);
+            };
+
+            const visitSummary = {
+                totalWindow: "9h 30min",
+                sightseeingTime: "4h 00min",
+                estimatedDistance: "4.5 km",
+                stepsApprox: "~6.000",
+                poiCount: 12,
+                accessibility: "Mayoría llano"
+            };
+
+            return (
+                <div className="pb-32 px-4 pt-6 max-w-lg mx-auto h-full overflow-y-auto no-scrollbar">
+                    <h2 className="text-2xl font-bold text-blue-900 mb-6 uppercase tracking-tight">Guía Marsella</h2>
+
+                    {/* Resumen de la Visita */}
+                    <div className="mb-8 bg-white rounded-[2rem] border border-blue-50 shadow-md p-6 overflow-hidden relative">
+                        <div className="flex items-center gap-2 mb-4">
+                        <ActivityIcon size={18} className="text-blue-700" />
+                        <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">Resumen de la Visita</h3>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-y-5 gap-x-4">
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Escala Total</span>
+                            <div className="flex items-center gap-1.5">
+                            <Clock size={14} className="text-blue-600" />
+                            <span className="text-sm font-black text-blue-950">{visitSummary.totalWindow}</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Turismo Activo</span>
+                            <div className="flex items-center gap-1.5">
+                            <Sun size={14} className="text-amber-500" />
+                            <span className="text-sm font-black text-blue-950">{visitSummary.sightseeingTime}</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Distancia a pie</span>
+                            <div className="flex items-center gap-1.5">
+                            <ActivityIcon size={14} className="text-emerald-600" />
+                            <span className="text-sm font-black text-blue-950">{visitSummary.estimatedDistance}</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Pasos aprox.</span>
+                            <div className="flex items-center gap-1.5">
+                            <Footprints size={14} className="text-slate-600" />
+                            <span className="text-sm font-black text-blue-950">{visitSummary.stepsApprox}</span>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-50 flex justify-between items-center text-[9px] font-bold uppercase text-slate-500">
+                        <span>{visitSummary.poiCount} Puntos de Interés</span>
+                        <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">{visitSummary.accessibility}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="mb-8 bg-rose-700 rounded-[2rem] p-6 shadow-xl text-white relative overflow-hidden">
+                        <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center mb-3">
+                                <PhoneCall size={24} className="mr-3 animate-pulse" />
+                                <h3 className="font-black text-lg uppercase tracking-widest">ASISTENCIA SOS</h3>
+                            </div>
+                            <p className="text-xs text-rose-50 mb-6 leading-relaxed">Envía tu ubicación exacta por WhatsApp si te has desorientado en Marsella.</p>
+                            <button onClick={handleSOS} className="w-full py-4 bg-white text-rose-700 font-black rounded-2xl text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-transform">Enviar Localización</button>
+                        </div>
+                    </div>
+
+                    <div className="mb-8">
+                        <div className="flex items-center gap-2 mb-4 px-1">
+                            <Thermometer size={20} className="text-blue-700"/>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-800">Clima Marsella</h3>
+                        </div>
+
+                        {loadingWeather ? (
+                             <div className="h-24 bg-white rounded-3xl animate-pulse border border-blue-50"></div>
+                        ) : weather ? (
+                            <>
+                            {/* Hourly Forecast */}
+                            <div className="bg-white p-2 pb-5 rounded-[2.5rem] border border-blue-50 shadow-xl overflow-hidden mb-4">
+                                <h4 className="text-[10px] font-black text-blue-300 uppercase tracking-widest text-center mt-2 mb-2">Hoy</h4>
+                                <div className="flex overflow-x-auto custom-h-scrollbar gap-3 px-6 py-2 items-stretch">
+                                    {weather.hourly.time.map((time, i) => {
+                                        const date = new Date(time);
+                                        const hour = date.getHours();
+                                        const now = new Date();
+                                        const diffMs = date.getTime() - now.getTime();
+                                        const diffHrs = diffMs / (1000 * 60 * 60);
+                                        
+                                        if (diffHrs >= -1 && diffHrs <= 12) {
+                                            return (
+                                                <div key={time} className="flex flex-col items-center justify-between min-w-[70px] p-3 bg-blue-50/50 rounded-3xl border border-blue-100">
+                                                    <span className="text-[10px] font-black text-blue-400 mb-2">{hour}:00</span>
+                                                    <div className="p-2 bg-white rounded-2xl mb-2 shadow-sm">{getWeatherIcon(weather.hourly.code[i], 24)}</div>
+                                                    <span className="text-base font-black text-blue-900 tracking-tighter">{Math.round(weather.hourly.temperature[i])}°</span>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* 5 Day Forecast */}
+                            <div className="bg-white rounded-[2rem] border border-blue-50 shadow-lg p-5">
+                                <div className="flex items-center gap-2 mb-4 px-1">
+                                    <CalendarDays size={16} className="text-blue-500" />
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Próximos 5 días</span>
+                                </div>
+                                <div className="space-y-1">
+                                    {weather.daily.time.slice(0, 5).map((day, i) => (
+                                    <div key={day} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors">
+                                        <span className="w-16 text-xs font-bold text-slate-600 capitalize">{formatDate(day)}</span>
+                                        <div className="flex items-center gap-3">
+                                            {getWeatherIcon(weather.daily.weathercode[i], 18)}
+                                        </div>
+                                        <div className="flex items-center gap-3 w-20 justify-end">
+                                            <span className="text-xs font-bold text-slate-800">{Math.round(weather.daily.temperature_2m_max[i])}°</span>
+                                            <span className="text-xs font-medium text-slate-400">{Math.round(weather.daily.temperature_2m_min[i])}°</span>
+                                        </div>
+                                    </div>
+                                    ))}
+                                </div>
+                            </div>
+                            </>
+                        ) : null}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center uppercase tracking-widest px-1">
+                        <Languages size={20} className="mr-2.5 text-blue-700"/> Francés Básico
+                    </h3>
+                    <div className="bg-white rounded-3xl shadow-md border border-blue-50 overflow-hidden mb-12">
+                        {PRONUNCIATIONS.map((item, idx) => (
+                            <div key={idx} className="p-5 flex justify-between items-center border-b border-slate-50 last:border-0 hover:bg-blue-50/30 transition-colors group">
+                                <div>
+                                    <div className="flex items-center gap-3">
+                                        <p className="font-black text-blue-950 text-lg tracking-tight">{item.word}</p>
+                                        <button onClick={() => play(item.word)} className={`p-2 rounded-full transition-all ${playing === item.word ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-400'}`}>
+                                            <Volume2 size={16} className={playing === item.word ? 'animate-pulse' : ''} />
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-slate-500 italic mt-1 font-medium tracking-tight">"{item.simplified}"</p>
+                                </div>
+                                <div className="text-right ml-4">
+                                    <p className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase border border-blue-100 tracking-tighter">{item.meaning}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [itinerary, setItinerary] = useState(INITIAL_ITINERARY);
+            const [activeTab, setActiveTab] = useState('timeline');
+            const [userLocation, setUserLocation] = useState(null);
+            const [mapFocus, setMapFocus] = useState(null);
+            const [countdown, setCountdown] = useState('--h --m --s');
+            const [audioGuideActivity, setAudioGuideActivity] = useState(null);
+            const [isPlaying, setIsPlaying] = useState(false);
+
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    const now = new Date();
+                    const [h, m] = SHIP_ONBOARD_TIME.split(':').map(Number);
+                    const target = new Date();
+                    target.setHours(h, m, 0, 0);
+                    const diff = target.getTime() - now.getTime();
+                    if (diff <= 0) setCountdown("¡A BORDO!");
+                    else {
+                        const hr = Math.floor(diff / 3600000);
+                        const mn = Math.floor((diff % 3600000) / 60000);
+                        const sc = Math.floor((diff % 60000) / 1000);
+                        setCountdown(`${hr.toString().padStart(2,'0')}h ${mn.toString().padStart(2,'0')}m ${sc.toString().padStart(2,'0')}s`);
+                    }
+                }, 1000);
+                if (navigator.geolocation) navigator.geolocation.watchPosition(pos => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }));
+                setTimeout(() => { const l = document.getElementById('initial-loader'); if(l) l.style.opacity = '0', setTimeout(() => l.remove(), 400); }, 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const handlePlayAudio = () => {
+                if (!audioGuideActivity?.audioGuideText) return;
+                
+                if (isPlaying) {
+                  window.speechSynthesis.cancel();
+                  setIsPlaying(false);
+                } else {
+                  const utterance = new SpeechSynthesisUtterance(audioGuideActivity.audioGuideText);
+                  utterance.lang = 'es-ES';
+                  utterance.rate = 0.95;
+                  utterance.onend = () => setIsPlaying(false);
+                  window.speechSynthesis.speak(utterance);
+                  setIsPlaying(true);
+                }
+              };
+
+            // Cálculo presupuesto
+            const totalBudget = itinerary.reduce((acc, curr) => acc + (curr.priceEUR || 0), 0);
+            const paidActivities = itinerary.filter(a => a.priceEUR > 0);
+            const chartData = paidActivities.map(act => ({ name: act.title, value: act.priceEUR }));
+            const COLORS = ['#1e3a8a', '#be123c', '#d97706', '#64748b'];
+
+            return (
+                <div className="flex flex-col h-screen bg-slate-50 overflow-hidden text-slate-900">
+                    <header className="bg-blue-950 text-white p-4 shadow-xl z-20 flex justify-between items-center shrink-0 border-b border-white/5">
+                        <div className="flex items-center"><Anchor className="mr-3 text-amber-500" size={24} /><div><h1 className="font-black text-[10px] uppercase tracking-[0.2em] text-blue-300">Escala Marsella</h1><p className="text-[12px] font-bold text-white/90 leading-tight">13 Abril 2026</p></div></div>
+                        <div className="text-right shrink-0">
+                            <span className="text-[8px] font-black uppercase text-amber-400 tracking-widest block mb-0.5">Límite Embarque</span>
+                            <div className="text-lg font-black font-mono text-white leading-none tracking-tighter">{countdown}</div>
+                        </div>
+                    </header>
+                    <main className="flex-1 relative overflow-hidden">
+                        {activeTab === 'timeline' && <div className="h-full overflow-y-auto no-scrollbar"><Timeline itinerary={itinerary} onToggleComplete={(id) => setItinerary(itinerary.map(a => a.id === id ? {...a, completed: !a.completed} : a))} onLocate={c => {setMapFocus(c); setActiveTab('map');}} onOpenAudioGuide={(act) => setAudioGuideActivity(act)} /></div>}
+                        {activeTab === 'map' && <MapComponent activities={itinerary} userLocation={userLocation} focusedLocation={mapFocus} />}
+                        {activeTab === 'budget' && (
+                            <div className="pb-24 px-4 pt-6 max-w-lg mx-auto h-full overflow-y-auto no-scrollbar">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-2xl font-bold text-blue-900 flex items-center uppercase tracking-tight"><Wallet className="mr-2" /> Gastos</h2>
+                                </div>
+                                <div className="bg-gradient-to-br from-blue-800 to-blue-950 rounded-[2rem] p-6 text-white shadow-xl mb-8 border-2 border-white/10 relative overflow-hidden">
+                                    <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-amber-400/20 rounded-full blur-2xl"></div>
+                                    <p className="text-blue-100 text-xs mb-1 uppercase tracking-widest font-black opacity-80">Presupuesto Escala</p>
+                                    <div className="text-4xl font-black">€{totalBudget}</div>
+                                </div>
+                                {paidActivities.length > 0 ? (
+                                    <>
+                                    <div className="bg-white rounded-3xl shadow-sm border border-blue-50 mb-8 overflow-hidden">
+                                        {paidActivities.map((act, index) => (
+                                        <div key={act.id} className="flex justify-between items-center p-5 border-b border-slate-50 last:border-0">
+                                            <div className="flex items-center">
+                                            <div className="w-2.5 h-2.5 rounded-full mr-3" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                                            <div><p className="text-sm font-bold text-slate-800">{act.title}</p></div>
+                                            </div>
+                                            <div className="font-black text-blue-900">€{act.priceEUR}</div>
+                                        </div>
+                                        ))}
+                                    </div>
+                                    <div className="h-64 w-full mb-8 bg-white rounded-3xl border border-blue-50 shadow-sm p-4">
+                                        <ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={chartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={8} dataKey="value">{chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />)}</Pie><Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontFamily: 'inherit', fontWeight: 'bold' }}/></PieChart></ResponsiveContainer>
+                                    </div>
+                                    </>
+                                ) : (
+                                    <div className="p-12 text-center bg-blue-50 rounded-[2.5rem] border-2 border-dashed border-blue-200 mb-8"><Wallet className="mx-auto text-blue-200 mb-4" size={32} /><p className="text-blue-400 font-bold uppercase tracking-widest text-xs">Sin gastos previstos</p></div>
+                                )}
+                            </div>
+                        )}
+                        {activeTab === 'guide' && <Guide userLocation={userLocation} />}
+
+                        {audioGuideActivity && (
+                            <div className="absolute inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-blue-950/40 backdrop-blur-sm animate-in fade-in duration-200">
+                              <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 duration-300">
+                                <div className="p-8">
+                                  <div className="flex justify-between items-start mb-6">
+                                    <div className="bg-blue-100 p-3 rounded-2xl border border-blue-200">
+                                      <Headphones size={24} className="text-blue-700" />
+                                    </div>
+                                    <button onClick={() => { window.speechSynthesis.cancel(); setIsPlaying(false); setAudioGuideActivity(null); }} className="text-slate-300 hover:text-slate-600 transition-colors">
+                                      <X size={28} />
+                                    </button>
+                                  </div>
+                                  
+                                  <h3 className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-2">Audioguía</h3>
+                                  <h4 className="text-xl font-black text-slate-800 mb-6 leading-tight">{audioGuideActivity.title}</h4>
+                                  
+                                  <div className="max-h-[300px] overflow-y-auto pr-2 custom-h-scrollbar mb-8">
+                                    <p className="text-slate-600 leading-relaxed font-medium italic">
+                                      {audioGuideActivity.audioGuideText}
+                                    </p>
+                                  </div>
+                  
+                                  <div className="flex gap-4">
+                                    <button 
+                                      onClick={handlePlayAudio}
+                                      className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-3xl font-black uppercase tracking-widest text-sm transition-all shadow-lg active:scale-95 ${
+                                        isPlaying ? 'bg-rose-600 text-white shadow-rose-200' : 'bg-blue-900 text-white shadow-blue-200'
+                                      }`}
+                                    >
+                                      {isPlaying ? <Square size={18} fill="white" /> : <Play size={18} fill="white" />}
+                                      {isPlaying ? 'Detener' : 'Escuchar'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                    </main>
+                    <nav className="bg-white border-t h-20 flex justify-around items-center px-2 pb-safe shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] z-30">
+                        {[
+                          { id: 'timeline', icon: CalendarClock, label: 'Itinerario' },
+                          { id: 'map', icon: MapIcon, label: 'Mapa' },
+                          { id: 'budget', icon: Wallet, label: 'Gastos' },
+                          { id: 'guide', icon: BookOpen, label: 'Guía' }
+                        ].map(t => (
+                          <button key={t.id} onClick={() => setActiveTab(t.id)} className={`flex flex-col items-center w-full transition-all ${activeTab === t.id ? 'text-blue-900' : 'text-slate-300'}`}>
+                            <div className={`p-2 rounded-xl mb-1 ${activeTab === t.id ? 'bg-blue-50 shadow-sm' : ''}`}><t.icon size={22} /></div>
+                            <span className={`text-[9px] font-black uppercase tracking-[0.1em] ${activeTab === t.id ? 'opacity-100' : 'opacity-60'}`}>{t.label}</span>
+                          </button>
+                        ))}
+                    </nav>
+                </div>
+            );
+        };
+
+        createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
